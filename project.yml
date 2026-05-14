@@ -11,15 +11,22 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "0.2.0"
+    MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
     CODE_SIGN_STYLE: Manual
-    CODE_SIGN_IDENTITY: "-"
-    DEVELOPMENT_TEAM: ""
-    ENABLE_HARDENED_RUNTIME: NO
     DEAD_CODE_STRIPPING: YES
     CLANG_ENABLE_OBJC_ARC: YES
     SWIFT_TREAT_WARNINGS_AS_ERRORS: NO
+  configs:
+    Debug:
+      CODE_SIGN_IDENTITY: "-"
+      DEVELOPMENT_TEAM: ""
+      ENABLE_HARDENED_RUNTIME: NO
+    Release:
+      CODE_SIGN_IDENTITY: "Developer ID Application"
+      DEVELOPMENT_TEAM: "S7GCDX6XVW"
+      ENABLE_HARDENED_RUNTIME: YES
+      OTHER_CODE_SIGN_FLAGS: "--timestamp --options=runtime"
 
 targets:
   InkBridge:
@@ -29,14 +36,23 @@ targets:
       - path: InkBridge
         excludes:
           - "Info.plist"
+          - "*.entitlements"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jgirvin.inkbridge
         PRODUCT_NAME: InkBridge
         INFOPLIST_FILE: InkBridge/Info.plist
         GENERATE_INFOPLIST_FILE: NO
-        CODE_SIGN_IDENTITY: "-"
         CODE_SIGN_STYLE: Manual
-        DEVELOPMENT_TEAM: ""
-        ENABLE_HARDENED_RUNTIME: NO
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      configs:
+        Debug:
+          CODE_SIGN_IDENTITY: "-"
+          DEVELOPMENT_TEAM: ""
+          ENABLE_HARDENED_RUNTIME: NO
+        Release:
+          CODE_SIGN_IDENTITY: "Developer ID Application"
+          DEVELOPMENT_TEAM: "S7GCDX6XVW"
+          ENABLE_HARDENED_RUNTIME: YES
+          OTHER_CODE_SIGN_FLAGS: "--timestamp --options=runtime"
+          CODE_SIGN_ENTITLEMENTS: InkBridge/InkBridge.entitlements
