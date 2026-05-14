@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+DerivedData/
+build/
+*.xccheckout
+*.moved-aside
+
+# SwiftPM
+.build/
+.swiftpm/
+Packages/
+Package.resolved
+
+# Misc
+*.swp
+*~

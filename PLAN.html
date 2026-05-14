@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>InkFlow.app — Phase 4 plan</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;max-width:920px;margin:2em auto;padding:0 1em;line-height:1.5;color:#222}
+h1,h2,h3{line-height:1.2}
+h2{margin-top:1.6em}
+code,pre{font-family:ui-monospace,Menlo,Monaco,monospace;font-size:0.92em}
+pre{background:#f4f4f4;padding:0.6em 0.8em;overflow-x:auto;border-radius:4px}
+code{background:#f4f4f4;padding:0 0.3em;border-radius:3px}
+table{border-collapse:collapse;margin:0.6em 0;width:100%}
+th,td{border:1px solid #ccc;padding:0.4em 0.6em;text-align:left;vertical-align:top}
+th{background:#eee}
+.note{background:#fff8e0;border-left:4px solid #e0b000;padding:0.5em 0.8em;margin:0.6em 0}
+.win{background:#e7f6e7;border-left:4px solid #2a9d2a;padding:0.5em 0.8em;margin:0.6em 0}
+.fail{background:#fde7e7;border-left:4px solid #c33;padding:0.5em 0.8em;margin:0.6em 0}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li{padding:0.15em 0 0.15em 1.6em;position:relative}
+ul.checklist li::before{content:"\2610";position:absolute;left:0;font-family:ui-monospace,Menlo,Monaco,monospace;color:#888}
+ul.checklist li.done::before{content:"\2611";color:#2a9d2a}
+</style>
+</head>
+<body>
+
+<h1>InkFlow.app — Phase 4 plan</h1>
+<p><em>Working directory: <code>/Users/josh/code/supernote-examination/inkflow-app</code>
+(its own git repo, empty as of writing).</em></p>
+
+<h2>1. Goal</h2>
+<p>Wrap <code>../phase3/inkflow.swift</code> in a proper macOS menu bar app so daily
+use doesn't involve running a CLI binary. The script already does everything functionally;
+this phase is about <em>packaging</em> — installable <code>.app</code>, stable bundle
+identifier (so TCC permissions stick across rebuilds), a status item that shows whether
+the device is connected, and a small menu for toggles.</p>
+
+<p><strong>Out of scope:</strong> changing the HID or CGEvent logic. Those are settled.
+Re-architecting MVM beyond what's needed to fit it into an AppKit lifecycle. Networking,
+sync, login, Firebase — explicitly not InkFlow's job.</p>
+
+<h2>2. Inputs (read these first)</h2>
+<table>
+<tr><th>File</th><th>What it gives you</th></tr>
+<tr><td><code>../PLAN.html</code></td>
+    <td>Master plan. Phases 1–3 are <code>done</code>. Skim §3a for VID/PID + raw
+        HID layout, §3 "Open decisions" for things still in flux.</td></tr>
+<tr><td><code>../ANALYSIS.html</code></td>
+    <td>Reverse-engineering record. §3.2 has the corrected <code>CGEventField</code>
+        decode, §3.4 has the HID-report-to-CGEvent pipeline.</td></tr>
+<tr><td><code>../phase3/inkflow.swift</code></td>
+    <td><strong>The base.</strong> ~430 lines, single file. Contains
+        <code>MacOSVirtualMouse</code> (CGEvent layer), <code>SupernoteHID</code>
+        (IOHIDManager open + report decode), and a <code>main</code> that wires them
+        together with CLI flags. Verified working: cursor, pressure, tilt, eraser
+        proximity, and <code>--excalidraw</code> keystroke workaround.</td></tr>
+<tr><td><code>../phase3/inkflow</code></td>
+    <td>Built binary for cross-check. <strong>Don't ship this</strong> — it has no
+        bundle, so TCC keeps re-prompting on every rebuild.</td></tr>
+</table>
+
+<h2>3. Tech-stack decisions</h2>
+
+<h3>3.1 Xcode project, not SwiftPM (recommended)</h3>
+<p>Menu bar apps need an <code>.app</code> bundle with a specific <code>Info.plist</code>
+(<code>LSUIElement = YES</code> to hide from the Dock), proper code signing, and a
+stable <code>CFBundleIdentifier</code> for TCC. SwiftPM can produce this with a manual
+wrapper script, but Xcode does it natively with one click. The .xcodeproj diff cost is
+real but acceptable for a single-target app.</p>
+<p>Alternative: SwiftPM + a <code>scripts/bundle.sh</code> that builds the binary and
+assembles an <code>.app</code> structure around it. Viable if we want zero-Xcode
+tooling, but defer until / unless we hit friction with the Xcode flow.</p>
+
+<h3>3.2 Programmatic AppKit, no Storyboard, no SwiftUI</h3>
+<p>The whole UI surface is a status item, a menu, and one permissions window. SwiftUI
+buys us nothing for that, and Storyboards add file-format weight. Plain Swift +
+<code>NSStatusItem</code>, <code>NSMenu</code>, <code>NSWindow</code>.</p>
+
+<h3>3.3 macOS 13+ target</h3>
+<p>Reasons:</p>
+<ul>
+  <li><code>SMAppService.mainApp</code> (the modern "launch at login" API) needs macOS 13.</li>
+  <li><code>IOHIDCheckAccess</code> for Input Monitoring permission status was stabilized
+      around macOS 12; macOS 13 is the safe baseline.</li>
+  <li>User is on macOS 26 (Darwin 25.4). No reason to support anything older.</li>
+</ul>
+
+<h2>4. Proposed repo layout</h2>
+<pre>inkflow-app/
+├── InkFlow.xcodeproj/
+├── InkFlow/                       # App target
+│   ├── App/
+│   │   ├── AppDelegate.swift
+│   │   ├── InkFlowController.swift   # owns the HID + MVM pipeline lifecycle
+│   │   ├── StatusItemController.swift
+│   │   ├── PermissionsWindow.swift
+│   │   └── Preferences.swift         # UserDefaults wrapper
+│   ├── Core/                       # logic extracted from phase3/inkflow.swift
+│   │   ├── MacOSVirtualMouse.swift
+│   │   ├── SupernoteHID.swift
+│   │   ├── CGEventFields.swift     # raw-value extension
+│   │   └── KeyCodes.swift
+│   ├── Resources/
+│   │   ├── Assets.xcassets         # status-item icons (SF Symbol overlay or custom)
+│   │   └── AppIcon.icns
+│   ├── Info.plist                  # LSUIElement=YES, usage strings
+│   └── InkFlow.entitlements
+├── README.md
+└── PLAN.html                       # this file
+</pre>
+
+<h2>5. Architecture</h2>
+<p>Two layers inside the single app target — keep AppKit out of the core so the core
+stays unit-testable and reusable (e.g. for a future CLI rebuild):</p>
+<table>
+<tr><th>Layer</th><th>Files</th><th>Knows about</th><th>Doesn't know about</th></tr>
+<tr><td>Core</td>
+    <td><code>MacOSVirtualMouse</code>, <code>SupernoteHID</code>, fields, key codes</td>
+    <td>CoreGraphics, IOKit, Foundation</td>
+    <td>AppKit, NSStatusItem, UserDefaults, the menu</td></tr>
+<tr><td>App</td>
+    <td><code>AppDelegate</code>, <code>InkFlowController</code>, <code>StatusItemController</code>,
+        <code>PermissionsWindow</code>, <code>Preferences</code></td>
+    <td>AppKit, Core, UserDefaults, SMAppService</td>
+    <td>HID byte layout, CGEvent field IDs</td></tr>
+</table>
+
+<p>The lifecycle owner is <code>InkFlowController</code>: holds the <code>MacOSVirtualMouse</code>
+instance and the <code>SupernoteHID</code> reader, exposes <code>start()</code> / <code>stop()</code>
+and an observable connection state. <code>StatusItemController</code> observes that state
+and updates the menu bar icon + first menu item.</p>
+
+<h2>6. Sub-phases</h2>
+
+<h3>4.1 — Skeleton <span style="color:#2a9d2a">✓ done 2026-05-14</span></h3>
+<ul class="checklist">
+  <li class="done">Create Xcode project via <strong>XcodeGen</strong> (<code>project.yml</code>
+      is the source of truth; <code>InkFlow.xcodeproj</code> is committed alongside).
+      Bundle ID <code>com.jgirvin.inkflow</code>, deployment target macOS 13.0, Swift 5,
+      ad-hoc signing baked into the spec (<code>CODE_SIGN_IDENTITY = "-"</code>,
+      <code>CODE_SIGN_STYLE = Manual</code>, no team).</li>
+  <li class="done"><code>Info.plist</code>: <code>LSUIElement</code> set to <code>YES</code> —
+      no Dock tile, app lives in the menu bar only. Also belt-and-braces:
+      <code>main.swift</code> calls <code>NSApp.setActivationPolicy(.accessory)</code>.</li>
+  <li class="done">Programmatic AppKit bootstrap in <code>InkFlow/App/main.swift</code>
+      (no Storyboard, no <code>@NSApplicationMain</code>, no <code>@main</code> — those
+      proved unreliable for this lifecycle; see Notes).</li>
+  <li class="done">Placeholder <code>NSStatusItem</code> with SF Symbol
+      <code>scribble.variable</code> (template-mode so it adapts to light/dark menu bar)
+      plus an <code>NSLog</code> fallback path if the symbol fails to load and a
+      <code>"Ink"</code> text fallback for the button. Menu has a single "Quit InkFlow ⌘Q".</li>
+  <li class="done">Built with <code>xcodebuild -scheme InkFlow build</code>; verified
+      ad-hoc signed (<code>codesign -dv</code> reports <code>Signature=adhoc</code>,
+      <code>TeamIdentifier=not set</code>). Launched from terminal, status item visible,
+      no Dock icon, Quit functional. Initial commit.</li>
+</ul>
+
+<h3>4.2 — Embed the phase3 logic</h3>
+<ul class="checklist">
+  <li>Copy <code>../phase3/inkflow.swift</code> into the project and split it into
+      <code>Core/MacOSVirtualMouse.swift</code>, <code>Core/SupernoteHID.swift</code>,
+      <code>Core/CGEventFields.swift</code>, <code>Core/KeyCodes.swift</code>. Drop the
+      <code>main</code> at the bottom — replaced by AppKit's main loop.</li>
+  <li>Remove CLI-arg parsing; instead, expose properties (<code>enableTabletFields</code>,
+      <code>excalidrawMode</code>, etc.) that <code>InkFlowController</code> sets from
+      <code>Preferences</code>.</li>
+  <li>Create <code>App/InkFlowController.swift</code>:
+      owns one <code>MacOSVirtualMouse</code> and one <code>SupernoteHID</code>;
+      exposes <code>start()</code>, <code>stop()</code>, and a published
+      <code>connectionState: .disconnected / .connected(name:)</code>.</li>
+  <li><code>AppDelegate.applicationDidFinishLaunching</code> calls
+      <code>controller.start()</code>; <code>applicationWillTerminate</code> calls
+      <code>controller.stop()</code> so the device is cleanly released.</li>
+  <li>Smoke test: launch app, plug device, enable InkFlow on Supernote — cursor follows
+      exactly like the CLI did. Commit.</li>
+</ul>
+
+<h3>4.3 — Status reflection</h3>
+<ul class="checklist">
+  <li><code>SupernoteHID</code> already has plug/unplug callbacks. Forward them as
+      a closure into <code>InkFlowController</code> so it can update connection state.</li>
+  <li><code>StatusItemController</code> swaps the status-item image and updates the
+      first menu item text:
+    <ul>
+      <li>Connected: filled icon + "<em>Connected: Supernote Nomad (SN…)</em>"</li>
+      <li>Disconnected: outline icon + "<em>Waiting for device…</em>"</li>
+    </ul>
+  </li>
+  <li>Optional: tint the icon (accent color) while a pen sample was received in the last
+      ~200 ms. Visual heartbeat. Defer if it feels gimmicky.</li>
+</ul>
+
+<h3>4.4 — Permissions UX</h3>
+<p>This is the highest-friction part of the current CLI experience and the main reason
+we're bundling. Move from "cryptic CGEventPost silently no-ops" to "clear window with
+two checkmarks and buttons that open the right settings pane."</p>
+<ul class="checklist">
+  <li>On launch (before <code>start()</code>): check
+    <ul>
+      <li><code>AXIsProcessTrusted()</code> → Accessibility</li>
+      <li><code>IOHIDCheckAccess(kIOHIDRequestTypeListenEvent)</code> → Input Monitoring</li>
+    </ul>
+  </li>
+  <li>If either is denied, show <code>PermissionsWindow</code> instead of starting the
+      controller. Window contents (one per missing perm):
+    <pre>[ ] Accessibility — required to inject pointer events
+    [Open System Settings…]    [Why?]
+[✓] Input Monitoring — required to read the Supernote
+    Granted.</pre>
+  </li>
+  <li>"Open System Settings…" buttons hit the right URL scheme:
+    <ul>
+      <li><code>x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility</code></li>
+      <li><code>x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent</code></li>
+    </ul>
+  </li>
+  <li>Poll the trust functions every 1 s while the window is open; auto-dismiss + start
+      controller as soon as both go green.</li>
+  <li>Menu item "Permissions…" reopens this window for re-checking.</li>
+</ul>
+
+<div class="note"><strong>TCC subject stability:</strong> the whole point of bundling is
+that TCC keys off the app's <code>CFBundleIdentifier</code> + code signature, not its
+filesystem path. As long as we keep the bundle ID stable and sign consistently (even
+ad-hoc), TCC grants survive rebuilds. <em>Don't</em> change the bundle ID after first
+release — it counts as a different app and forces re-grant.</div>
+
+<h3>4.5 — Settings &amp; menu toggles</h3>
+<ul class="checklist">
+  <li><code>Preferences</code>: thin wrapper around <code>UserDefaults.standard</code>
+      with typed getters/setters for:
+    <ul>
+      <li><code>enableTabletFields</code> — Bool, default true</li>
+      <li><code>excalidrawMode</code> — Bool, default false</li>
+      <li><code>launchAtLogin</code> — Bool, default false</li>
+      <li><code>targetDisplayID</code> — Optional&lt;CGDirectDisplayID&gt; (Phase 4.6)</li>
+    </ul>
+  </li>
+  <li>Menu items with <code>.state = .on/.off</code> reflecting each prefs value; toggling
+      flips the pref and pushes new value into the controller.</li>
+  <li>Live-apply: changing a toggle should take effect on the next HID sample (no restart).</li>
+</ul>
+
+<h3>4.6 — Polish</h3>
+<ul class="checklist">
+  <li><strong>Launch at login</strong> via <code>SMAppService.mainApp</code>:
+      <code>register()</code> / <code>unregister()</code> driven by the prefs toggle.
+      Verify the registration sticks after a reboot.</li>
+  <li><strong>Multi-display.</strong> Add a "Map to display" submenu listing
+      <code>NSScreen.screens</code>; chosen display's <code>frame</code> drives the
+      X/Y scaling in MVM instead of <code>NSScreen.main</code>. Persist the choice as the
+      <code>CGDirectDisplayID</code>, fall back to main if the saved one disappears.</li>
+  <li><strong>App icon &amp; menu-bar icon.</strong> Custom <code>.icns</code> (Dock fallback
+      if user invokes via Spotlight; not strictly necessary with <code>LSUIElement</code>)
+      plus the status-item icon. SF Symbols for v1, custom monochrome PDF for v2.</li>
+  <li><strong>About panel.</strong> Standard <code>NSApp.orderFrontStandardAboutPanel</code>
+      with credits and a link to this repo.</li>
+  <li><strong>Optional orientation override.</strong> If the device's coordinate axes
+      ever feel rotated/mirrored (depends how the user holds it), add a 4-way rotation
+      pref. Don't build unless the user reports needing it.</li>
+</ul>
+
+<h2>7. Permissions flow (visual)</h2>
+<pre>      app launches
+            │
+            ▼
+   ┌──────────────────────┐
+   │ both perms granted?  │
+   └──────────────────────┘
+            │
+       yes / no
+            │
+   yes ───► start() ───► status item shows "Waiting for device"
+            │                       │
+            │                       ▼
+            │              device plug-in match-cb
+            │                       │
+            │                       ▼
+            │              "Connected: …" + pen drives cursor
+            │
+    no ───► PermissionsWindow
+                │
+                ▼
+       user clicks "Open System Settings…"
+                │
+                ▼
+       grants permission externally
+                │
+                ▼
+       poll detects grant → close window → start()
+</pre>
+
+<h2>8. Menu sketch</h2>
+<pre>┌─────────────────────────────────────┐
+│  ● Connected: Supernote Nomad       │ ← status, disabled menu item
+│  ─────────────────────────────────  │
+│  ✓ Tablet emulation (pressure/tilt) │
+│  □ Excalidraw eraser mode           │
+│  ─────────────────────────────────  │
+│  Map to display          ▶          │ ← submenu of NSScreens
+│  Permissions…                       │
+│  ─────────────────────────────────  │
+│  ✓ Launch at login                  │
+│  About InkFlow                      │
+│  Quit                          ⌘Q  │
+└─────────────────────────────────────┘
+</pre>
+
+<h2>9. Open decisions</h2>
+<ul>
+  <li><span class="win"><strong>Bundle identifier.</strong> Resolved: <code>com.jgirvin.inkflow</code>.
+      Locked — TCC grants pin to this + signature.</span></li>
+  <li><span class="win"><strong>Code signing.</strong> Resolved: ad-hoc
+      (<code>CODE_SIGN_IDENTITY = "-"</code>, no team). User accepts the one-time Gatekeeper
+      override per Mac. Upgrade path to Developer ID + notarization stays open and keeps
+      TCC grants stable (bundle ID is the load-bearing identifier).</span></li>
+  <li><strong>Distribution.</strong> Build locally only? GitHub Releases with a built
+      <code>.app</code> zip? Defer until v1 works end-to-end.</li>
+  <li><span class="win"><strong>Status-item visual.</strong> Resolved for v1: SF Symbol
+      <code>scribble.variable</code> in template mode. Reconsider if a custom monochrome
+      PDF becomes worth designing.</span></li>
+  <li><strong>Settings window vs menu-only.</strong> The menu is enough for current
+      toggles. If we add display picker, orientation, custom keystrokes — a dedicated
+      preferences window starts pulling its weight. Add when it does.</li>
+</ul>
+
+<h2>12. Notes &amp; surprises</h2>
+<ul>
+  <li><strong>Xcode was not installed at session start.</strong> Only Command Line Tools
+      were present, so <code>xcodebuild -project InkFlow.xcodeproj</code> failed initially.
+      Installing Xcode from the App Store, switching the active developer dir with
+      <code>sudo xcode-select -s /Applications/Xcode.app/Contents/Developer</code>, and
+      accepting the license unblocked the build. Confirmed working with Xcode 26.5 /
+      build 17F42 on macOS 26 (Darwin 25.4).</li>
+  <li><strong><code>@main</code> on <code>NSApplicationDelegate</code> is not a reliable
+      pattern for programmatic AppKit menu-bar apps.</strong> The first iteration used
+      <code>@main final class AppDelegate: NSObject, NSApplicationDelegate</code>; the
+      app process started but no status item appeared. Switched to an explicit
+      <code>main.swift</code> that instantiates the delegate, assigns it to
+      <code>NSApplication.shared</code>, sets <code>.accessory</code> activation policy
+      (defensive — <code>LSUIElement</code> in Info.plist should already do this), and
+      calls <code>NSApp.run()</code>. This matches PLAN §4.1's original direction and
+      should be the long-term pattern; do not regress to <code>@main</code> or
+      <code>@NSApplicationMain</code> without testing.</li>
+  <li><strong>SF Symbol fallback worth keeping.</strong> A failed <code>NSImage(systemSymbolName:)</code>
+      lookup silently produces a zero-width status item button under variable length.
+      <code>AppDelegate.applicationDidFinishLaunching</code> logs an <code>NSLog</code>
+      diagnostic and falls back to a <code>"Ink"</code> title if the symbol disappears
+      in a future SDK. Keep this guard when iterating on the icon.</li>
+  <li><strong>XcodeGen is the source of truth.</strong> <code>project.yml</code> is hand-edited;
+      <code>xcodegen generate</code> rewrites <code>InkFlow.xcodeproj</code>. Per user
+      preference, both are committed. If a setting needs changing, edit <code>project.yml</code>
+      and regenerate — don't hand-edit <code>project.pbxproj</code> directly, as the next
+      regeneration would clobber it.</li>
+</ul>
+
+<h2>10. What &quot;done&quot; looks like</h2>
+<ol>
+  <li>Double-click the bundled <code>.app</code> → status item appears in the menu bar,
+      no Dock tile.</li>
+  <li>First launch: permission window asks for the two perms; granting them auto-dismisses
+      and starts the pipeline. No re-prompts on subsequent rebuilds.</li>
+  <li>Plug Supernote in, enable InkFlow on the device → status item updates to
+      "Connected", cursor follows the pen with pressure + tilt.</li>
+  <li>Unplug → status item goes to "Waiting for device". Re-plug → reconnects without
+      intervention.</li>
+  <li>Excalidraw mode toggle works from the menu, takes effect on next pen-flip.</li>
+  <li>Reboot → app auto-launches (if pref enabled), starts headlessly, ready when device
+      is plugged in.</li>
+</ol>
+
+<h2>11. Things explicitly NOT in this phase</h2>
+<ul>
+  <li>Multi-device routing. One Supernote per Mac.</li>
+  <li>Per-app tablet-mode overrides. The user toggles globally.</li>
+  <li>Keyboard shortcut customization. Excalidraw keys are hardcoded for now.</li>
+  <li>Crash reporting / analytics.</li>
+  <li>Auto-update.</li>
+</ul>
+
+</body>
+</html>
