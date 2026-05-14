@@ -1,4 +1,4 @@
-name: InkFlow
+name: InkBridge
 
 options:
   deploymentTarget:
@@ -22,18 +22,18 @@ settings:
     SWIFT_TREAT_WARNINGS_AS_ERRORS: NO
 
 targets:
-  InkFlow:
+  InkBridge:
     type: application
     platform: macOS
     sources:
-      - path: InkFlow
+      - path: InkBridge
         excludes:
           - "Info.plist"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.jgirvin.inkflow
-        PRODUCT_NAME: InkFlow
-        INFOPLIST_FILE: InkFlow/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.jgirvin.inkbridge
+        PRODUCT_NAME: InkBridge
+        INFOPLIST_FILE: InkBridge/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         CODE_SIGN_IDENTITY: "-"
         CODE_SIGN_STYLE: Manual

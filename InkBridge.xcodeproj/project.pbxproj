@@ -1,0 +1,397 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		107CA58A6A450111AD0843F3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC476D1357BF6D3FC1EDE9BB /* main.swift */; };
+		1AA09079594B598FCFFFEF33 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E56C0547B51B3EDEC9A5277C /* AppDelegate.swift */; };
+		1DA6FC4D7BD84E15CE69EADD /* CGEventFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C992CB30BA6D6DC31A68E3 /* CGEventFields.swift */; };
+		3F5D5E482A699D41F15BE9AF /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8188F6B7E2C1F4B43E2CCA80 /* LaunchAtLogin.swift */; };
+		5077FE222585B3CC62D33D6D /* NSScreen+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10EAA1DD3D7716891249484D /* NSScreen+Display.swift */; };
+		56E3496986A3F9CAFE292550 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D78DDD45EDA0581ED9350C2E /* Assets.xcassets */; };
+		5FB7BBC08B9B2FD9E05D84B0 /* SupernoteHID.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9C08ED7B2BF3188556AC0A2 /* SupernoteHID.swift */; };
+		80060A954FC7045714BDDD57 /* InkFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A92280178C94DFEAB0E6F548 /* InkFlowController.swift */; };
+		86452F5EE36F685C9D6A748B /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4967071C7FB03A3B70916F /* Permissions.swift */; };
+		A128F111EC1E772DC53A22B9 /* MacOSVirtualMouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E729F3922B9D289912A0B810 /* MacOSVirtualMouse.swift */; };
+		A1A46CE536468A6F27065BFE /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1484EB9B5E347F79A7AD49EC /* StatusItemController.swift */; };
+		C06B7811B744B4B64E258085 /* KeyCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E83E2964C97A0C4C424418 /* KeyCodes.swift */; };
+		C53322F420170E1951C84D5E /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D1FEA396E6D419381EE105 /* Preferences.swift */; };
+		D4C72155F6A0ADB2C0B4B596 /* PermissionsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10DEBE3C03CD1FCFDDC1DB6 /* PermissionsWindowController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		10EAA1DD3D7716891249484D /* NSScreen+Display.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScreen+Display.swift"; sourceTree = "<group>"; };
+		1484EB9B5E347F79A7AD49EC /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
+		57C992CB30BA6D6DC31A68E3 /* CGEventFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGEventFields.swift; sourceTree = "<group>"; };
+		78E83E2964C97A0C4C424418 /* KeyCodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCodes.swift; sourceTree = "<group>"; };
+		8188F6B7E2C1F4B43E2CCA80 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
+		9A500ECFB28F6784EE1D70FA /* InkBridge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InkBridge.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A92280178C94DFEAB0E6F548 /* InkFlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InkFlowController.swift; sourceTree = "<group>"; };
+		B8D1FEA396E6D419381EE105 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		C10DEBE3C03CD1FCFDDC1DB6 /* PermissionsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsWindowController.swift; sourceTree = "<group>"; };
+		CC476D1357BF6D3FC1EDE9BB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		D78DDD45EDA0581ED9350C2E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DF4967071C7FB03A3B70916F /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
+		E56C0547B51B3EDEC9A5277C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E729F3922B9D289912A0B810 /* MacOSVirtualMouse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSVirtualMouse.swift; sourceTree = "<group>"; };
+		F9C08ED7B2BF3188556AC0A2 /* SupernoteHID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupernoteHID.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		15CB9E8902BB94E7BC5E5D9D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D78DDD45EDA0581ED9350C2E /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		37ADD916805B28DE8AC90D49 /* InkBridge */ = {
+			isa = PBXGroup;
+			children = (
+				A2C50586812675DEF09E3654 /* App */,
+				91BC9A7A18BD516A91279790 /* Core */,
+				15CB9E8902BB94E7BC5E5D9D /* Resources */,
+			);
+			path = InkBridge;
+			sourceTree = "<group>";
+		};
+		7BF30232EFA268A211659A1E = {
+			isa = PBXGroup;
+			children = (
+				37ADD916805B28DE8AC90D49 /* InkBridge */,
+				AA46E3C02782D6509E535A03 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		91BC9A7A18BD516A91279790 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				57C992CB30BA6D6DC31A68E3 /* CGEventFields.swift */,
+				78E83E2964C97A0C4C424418 /* KeyCodes.swift */,
+				E729F3922B9D289912A0B810 /* MacOSVirtualMouse.swift */,
+				F9C08ED7B2BF3188556AC0A2 /* SupernoteHID.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		A2C50586812675DEF09E3654 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				E56C0547B51B3EDEC9A5277C /* AppDelegate.swift */,
+				A92280178C94DFEAB0E6F548 /* InkFlowController.swift */,
+				8188F6B7E2C1F4B43E2CCA80 /* LaunchAtLogin.swift */,
+				CC476D1357BF6D3FC1EDE9BB /* main.swift */,
+				10EAA1DD3D7716891249484D /* NSScreen+Display.swift */,
+				DF4967071C7FB03A3B70916F /* Permissions.swift */,
+				C10DEBE3C03CD1FCFDDC1DB6 /* PermissionsWindowController.swift */,
+				B8D1FEA396E6D419381EE105 /* Preferences.swift */,
+				1484EB9B5E347F79A7AD49EC /* StatusItemController.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		AA46E3C02782D6509E535A03 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9A500ECFB28F6784EE1D70FA /* InkBridge.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7BF99E9A36C07AA071D4378C /* InkBridge */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D6C86B6C8FE7CC6B8250577 /* Build configuration list for PBXNativeTarget "InkBridge" */;
+			buildPhases = (
+				C1A8E9019A9F5B7907855B67 /* Sources */,
+				BCB5CD62602D1C190A80791C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InkBridge;
+			packageProductDependencies = (
+			);
+			productName = InkBridge;
+			productReference = 9A500ECFB28F6784EE1D70FA /* InkBridge.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4BABBD7C03CD461AB6D17EC4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					7BF99E9A36C07AA071D4378C = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = FF8853B44AFECBF5E7D22FB4 /* Build configuration list for PBXProject "InkBridge" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 7BF30232EFA268A211659A1E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = AA46E3C02782D6509E535A03 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7BF99E9A36C07AA071D4378C /* InkBridge */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BCB5CD62602D1C190A80791C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56E3496986A3F9CAFE292550 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C1A8E9019A9F5B7907855B67 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AA09079594B598FCFFFEF33 /* AppDelegate.swift in Sources */,
+				1DA6FC4D7BD84E15CE69EADD /* CGEventFields.swift in Sources */,
+				80060A954FC7045714BDDD57 /* InkFlowController.swift in Sources */,
+				C06B7811B744B4B64E258085 /* KeyCodes.swift in Sources */,
+				3F5D5E482A699D41F15BE9AF /* LaunchAtLogin.swift in Sources */,
+				A128F111EC1E772DC53A22B9 /* MacOSVirtualMouse.swift in Sources */,
+				5077FE222585B3CC62D33D6D /* NSScreen+Display.swift in Sources */,
+				86452F5EE36F685C9D6A748B /* Permissions.swift in Sources */,
+				D4C72155F6A0ADB2C0B4B596 /* PermissionsWindowController.swift in Sources */,
+				C53322F420170E1951C84D5E /* Preferences.swift in Sources */,
+				A1A46CE536468A6F27065BFE /* StatusItemController.swift in Sources */,
+				5FB7BBC08B9B2FD9E05D84B0 /* SupernoteHID.swift in Sources */,
+				107CA58A6A450111AD0843F3 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84510BE7591BF234FE28AE28 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = InkBridge/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jgirvin.inkbridge;
+				PRODUCT_NAME = InkBridge;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		E08D8A0B9DF53AAEA0B2C29E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		ED7A816921723C78A41009EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F28A1A148713045C60C87A19 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = InkBridge/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jgirvin.inkbridge;
+				PRODUCT_NAME = InkBridge;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7D6C86B6C8FE7CC6B8250577 /* Build configuration list for PBXNativeTarget "InkBridge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84510BE7591BF234FE28AE28 /* Debug */,
+				F28A1A148713045C60C87A19 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FF8853B44AFECBF5E7D22FB4 /* Build configuration list for PBXProject "InkBridge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E08D8A0B9DF53AAEA0B2C29E /* Debug */,
+				ED7A816921723C78A41009EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4BABBD7C03CD461AB6D17EC4 /* Project object */;
+}
