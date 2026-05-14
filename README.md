@@ -2,6 +2,8 @@
 
 Unofficial macOS support for the Supernote InkFlow feature. Drives the Mac cursor with pressure and tilt from a Supernote stylus over USB, without needing the Supernote Partner app running.
 
+Note: I am *not* a Swift programmer, this was done with AI help, but it does work! Don't judge the code _too_ harshly :) 
+
 ![InkBridge menu bar](screenshot.png)
 
 ## Use
