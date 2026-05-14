@@ -40,7 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         controller.excalidrawMode = prefs.excalidrawMode
 
-        if Permissions.bothGranted() {
+        if Permissions.accessibilityGranted() {
             startController()
         } else {
             showPermissionsWindow(autoDismissWhenGranted: true)

@@ -44,7 +44,7 @@ final class SupernoteHID {
             throw NSError(domain: "IOHID", code: Int(res), userInfo: [
                 NSLocalizedDescriptionKey:
                     "IOHIDManagerOpen with seize failed: 0x\(String(format:"%08x", res)). " +
-                    "Open System Settings → Privacy & Security → Input Monitoring and enable InkBridge, then re-launch."
+                    "Another app may be holding the device — try unplugging the Supernote and re-launching InkBridge."
             ])
         }
 

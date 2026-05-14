@@ -2,35 +2,23 @@ import AppKit
 
 final class PermissionsWindowController: NSWindowController, NSWindowDelegate {
 
-    enum Kind {
-        case accessibility
-        case inputMonitoring
-    }
-
     var onAllGranted: (() -> Void)?
 
     private let accessibilityRow: PermissionRow
-    private let inputMonitoringRow: PermissionRow
     private var pollTimer: Timer?
     private var autoDismissWhenGranted: Bool = true
-    private var lastAllGranted: Bool = false
+    private var lastGranted: Bool = false
 
     init() {
         accessibilityRow = PermissionRow(
             title: "Accessibility",
-            subtitle: "Required to inject pointer events.",
+            subtitle: "Required to inject pointer events into macOS.",
             settingsURL: URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!,
             requestAction: { Permissions.requestAccessibility() }
         )
-        inputMonitoringRow = PermissionRow(
-            title: "Input Monitoring",
-            subtitle: "Required to read the Supernote stylus.",
-            settingsURL: URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent")!,
-            requestAction: { Permissions.requestInputMonitoring() }
-        )
 
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 460, height: 220),
+            contentRect: NSRect(x: 0, y: 0, width: 460, height: 180),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -43,14 +31,14 @@ final class PermissionsWindowController: NSWindowController, NSWindowDelegate {
         super.init(window: window)
         window.delegate = self
 
-        let header = NSTextField(wrappingLabelWithString: "InkBridge needs two macOS permissions before it can drive the cursor:")
+        let header = NSTextField(wrappingLabelWithString: "InkBridge needs Accessibility permission to drive the cursor:")
         header.font = .systemFont(ofSize: NSFont.systemFontSize)
 
-        let footer = NSTextField(wrappingLabelWithString: "Status updates automatically. Once both rows are green, this window closes and InkBridge starts.")
+        let footer = NSTextField(wrappingLabelWithString: "Status updates automatically. Once the row is green, this window closes and InkBridge starts.")
         footer.textColor = .secondaryLabelColor
         footer.font = .systemFont(ofSize: 11)
 
-        let stack = NSStackView(views: [header, accessibilityRow, inputMonitoringRow, footer])
+        let stack = NSStackView(views: [header, accessibilityRow, footer])
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.spacing = 14
@@ -73,9 +61,9 @@ final class PermissionsWindowController: NSWindowController, NSWindowDelegate {
 
     func present(autoDismissWhenGranted: Bool) {
         self.autoDismissWhenGranted = autoDismissWhenGranted
-        lastAllGranted = false
+        lastGranted = false
         refresh()
-        if window?.isVisible == true && autoDismissWhenGranted && Permissions.bothGranted() {
+        if window?.isVisible == true && autoDismissWhenGranted && Permissions.accessibilityGranted() {
             return
         }
         NSApp.activate(ignoringOtherApps: true)
@@ -100,19 +88,16 @@ final class PermissionsWindowController: NSWindowController, NSWindowDelegate {
     }
 
     private func refresh() {
-        let ax = Permissions.accessibilityGranted()
-        let im = Permissions.inputMonitoringGranted()
-        accessibilityRow.setGranted(ax)
-        inputMonitoringRow.setGranted(im)
-        let now = ax && im
-        if now && !lastAllGranted {
+        let granted = Permissions.accessibilityGranted()
+        accessibilityRow.setGranted(granted)
+        if granted && !lastGranted {
             onAllGranted?()
             if autoDismissWhenGranted {
                 stopPolling()
                 window?.close()
             }
         }
-        lastAllGranted = now
+        lastGranted = granted
     }
 }
 
