@@ -8,8 +8,7 @@ final class MacOSVirtualMouse {
     private let eventSource: CGEventSource
     private var cachedEvent: CGEvent
 
-    var displayWidth:  CGFloat
-    var displayHeight: CGFloat
+    var displayFrame: CGRect
 
     var enableTabletFields: Bool = true
     var logEvents: Bool = false
@@ -33,17 +32,16 @@ final class MacOSVirtualMouse {
     private var lastSampleTime: Date = .distantPast
     private var lastEraserKey: Bool = false
 
-    init(displayWidth: CGFloat, displayHeight: CGFloat) {
+    init(displayFrame: CGRect) {
         guard let src = CGEventSource(stateID: .hidSystemState) else {
             fatalError("CGEventSourceCreate failed.")
         }
         guard let ev = CGEvent(source: src) else {
             fatalError("CGEventCreate failed.")
         }
-        self.eventSource  = src
-        self.cachedEvent  = ev
-        self.displayWidth  = displayWidth
-        self.displayHeight = displayHeight
+        self.eventSource = src
+        self.cachedEvent = ev
+        self.displayFrame = displayFrame
     }
 
     func handle(buttons: UInt8, rawX: UInt16, rawY: UInt16,
@@ -188,7 +186,10 @@ final class MacOSVirtualMouse {
         up?.post(tap: .cghidEventTap)
     }
     private func screenPoint(x: Float, y: Float) -> CGPoint {
-        CGPoint(x: CGFloat(x) * displayWidth, y: CGFloat(y) * displayHeight)
+        CGPoint(
+            x: displayFrame.origin.x + CGFloat(x) * displayFrame.width,
+            y: displayFrame.origin.y + CGFloat(y) * displayFrame.height
+        )
     }
     private func downType(for bit: Int) -> CGEventType {
         switch bit { case 0: return .leftMouseDown; case 1: return .rightMouseDown; default: return .otherMouseDown }

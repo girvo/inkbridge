@@ -44,7 +44,7 @@ final class InkFlowController {
 
     func start() {
         let frame = currentDisplayFrame()
-        let mvm = MacOSVirtualMouse(displayWidth: frame.width, displayHeight: frame.height)
+        let mvm = MacOSVirtualMouse(displayFrame: frame)
         mvm.excalidrawMode = excalidrawMode
         let hid = SupernoteHID(mvm: mvm)
 
@@ -73,17 +73,22 @@ final class InkFlowController {
     }
 
     private func applyDisplay() {
-        let frame = currentDisplayFrame()
-        mvm?.displayWidth  = frame.width
-        mvm?.displayHeight = frame.height
+        mvm?.displayFrame = currentDisplayFrame()
     }
 
     private func currentDisplayFrame() -> CGRect {
-        if let id = targetDisplayID,
-           let screen = NSScreen.screens.first(where: { $0.displayID == id }) {
-            return screen.frame
+        // CGDisplayBounds returns the display's rect in global Quartz coordinates
+        // (top-left origin, spanning all attached displays). This is the same
+        // coordinate space CGEvent.location uses, so no AppKit-to-Quartz flip
+        // is required. NSScreen.frame is AppKit coords (bottom-left) and would
+        // need conversion — avoid it.
+        if let id = targetDisplayID {
+            let bounds = CGDisplayBounds(id)
+            if bounds.size.width > 0 && bounds.size.height > 0 {
+                return bounds
+            }
         }
-        return NSScreen.main?.frame ?? CGRect(x: 0, y: 0, width: 1920, height: 1080)
+        return CGDisplayBounds(CGMainDisplayID())
     }
 
     private static func displayName(for device: IOHIDDevice) -> String {
