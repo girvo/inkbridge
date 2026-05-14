@@ -77,14 +77,33 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     func apply(_ state: InkFlowController.ConnectionState) {
         switch state {
         case .disconnected:
+            statusMenuItem.attributedTitle = nil
             statusMenuItem.title = "Waiting for device…"
             statusItem.button?.image = Self.menuBarImage(connected: false)
             statusItem.button?.image?.isTemplate = true
-        case .connected(let name):
-            statusMenuItem.title = "Connected: \(name)"
+        case .connected(let name, let serial):
+            statusMenuItem.attributedTitle = Self.connectedTitle(name: name, serial: serial)
             statusItem.button?.image = Self.menuBarImage(connected: true)
             statusItem.button?.image?.isTemplate = true
         }
+    }
+
+    private static func connectedTitle(name: String, serial: String?) -> NSAttributedString {
+        let title = NSMutableAttributedString()
+        title.append(NSAttributedString(
+            string: "Connected: \(name)",
+            attributes: [.font: NSFont.menuFont(ofSize: 0)]
+        ))
+        if let serial = serial, !serial.isEmpty {
+            title.append(NSAttributedString(
+                string: "\n\(serial)",
+                attributes: [
+                    .font: NSFont.menuFont(ofSize: NSFont.smallSystemFontSize),
+                    .foregroundColor: NSColor.secondaryLabelColor,
+                ]
+            ))
+        }
+        return title
     }
 
     func setExcalidrawChecked(_ enabled: Bool) {

@@ -6,7 +6,7 @@ final class InkFlowController {
 
     enum ConnectionState {
         case disconnected
-        case connected(name: String)
+        case connected(name: String, serial: String?)
     }
 
     private(set) var state: ConnectionState = .disconnected {
@@ -49,7 +49,8 @@ final class InkFlowController {
         let hid = SupernoteHID(mvm: mvm)
 
         hid.onMatched = { [weak self] device in
-            self?.state = .connected(name: Self.displayName(for: device))
+            let info = Self.deviceInfo(for: device)
+            self?.state = .connected(name: info.name, serial: info.serial)
         }
         hid.onRemoved = { [weak self] _ in
             self?.state = .disconnected
@@ -91,13 +92,12 @@ final class InkFlowController {
         return CGDisplayBounds(CGMainDisplayID())
     }
 
-    private static func displayName(for device: IOHIDDevice) -> String {
-        let product = IOHIDDeviceGetProperty(device, kIOHIDProductKey as CFString) as? String
-        let serial  = IOHIDDeviceGetProperty(device, kIOHIDSerialNumberKey as CFString) as? String
-        switch (product, serial) {
-        case let (p?, s?): return "\(p) (\(s))"
-        case let (p?, nil): return p
-        default: return "Supernote"
-        }
+    private static func deviceInfo(for device: IOHIDDevice) -> (name: String, serial: String?) {
+        // The USB product string is firmware-set and currently reports
+        // "Supernote Nomad" on every Supernote model we've seen — including
+        // the Manta. Until we have a way to fingerprint the model reliably,
+        // surface the generic "Supernote" name and pair it with the serial.
+        let serial = IOHIDDeviceGetProperty(device, kIOHIDSerialNumberKey as CFString) as? String
+        return ("Supernote", serial)
     }
 }

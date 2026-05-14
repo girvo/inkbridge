@@ -26,8 +26,6 @@ final class PermissionsWindowController: NSWindowController, NSWindowDelegate {
         window.title = "InkBridge Permissions"
         window.isReleasedWhenClosed = false
         window.center()
-        window.level = .floating
-
         super.init(window: window)
         window.delegate = self
 
@@ -42,16 +40,20 @@ final class PermissionsWindowController: NSWindowController, NSWindowDelegate {
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.spacing = 14
-        stack.edgeInsets = NSEdgeInsets(top: 20, left: 24, bottom: 20, right: 24)
         stack.translatesAutoresizingMaskIntoConstraints = false
 
+        // Margin via constraints rather than NSStackView.edgeInsets: the row's
+        // leftStack has low horizontal hugging priority so it grows to absorb
+        // free space, and edgeInsets stop being honoured on the trailing side
+        // once an arranged subview overflows. Pinning the stack inset from
+        // the content view's edges enforces the padding deterministically.
         let content = NSView()
         content.addSubview(stack)
         NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: content.topAnchor),
-            stack.bottomAnchor.constraint(equalTo: content.bottomAnchor),
-            stack.leadingAnchor.constraint(equalTo: content.leadingAnchor),
-            stack.trailingAnchor.constraint(equalTo: content.trailingAnchor),
+            stack.topAnchor.constraint(equalTo: content.topAnchor, constant: 20),
+            stack.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -20),
+            stack.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 24),
+            stack.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -24),
         ])
         window.contentView = content
         refresh()
@@ -109,9 +111,9 @@ private final class PermissionRow: NSStackView {
     private let openButton = NSButton(title: "Open System Settings…", target: nil, action: nil)
 
     private let settingsURL: URL
-    private let requestAction: () -> Void
+    private let requestAction: () -> Bool
 
-    init(title: String, subtitle: String, settingsURL: URL, requestAction: @escaping () -> Void) {
+    init(title: String, subtitle: String, settingsURL: URL, requestAction: @escaping () -> Bool) {
         self.settingsURL = settingsURL
         self.requestAction = requestAction
         super.init(frame: .zero)
@@ -168,7 +170,15 @@ private final class PermissionRow: NSStackView {
     }
 
     @objc private func handleOpen() {
-        requestAction()
-        NSWorkspace.shared.open(settingsURL)
+        // requestAction triggers macOS's native Accessibility prompt as a
+        // side-effect when the app isn't yet trusted. That prompt has its
+        // own "Open System Settings" button that deep-links to the right
+        // pane — opening Settings ourselves on top of that stacks two
+        // windows over the prompt and confused users in v0.1.2. Only fall
+        // back to opening Settings if the app is already trusted (so no
+        // prompt fires) and the user is auditing.
+        if requestAction() {
+            NSWorkspace.shared.open(settingsURL)
+        }
     }
 }
